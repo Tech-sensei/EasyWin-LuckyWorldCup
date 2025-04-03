@@ -5,6 +5,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const loadingIndicator = document.getElementById("loadingIndicator");
   const metricsNum = document.getElementById("metricsNum");
 
+  const popupModal = document.getElementById("popupModal");
+  const popupTitle = document.getElementById("popupTitle");
+  const popupMessage = document.getElementById("popupMessage");
+  const closePopupBtn = document.getElementById("closePopupBtn");
+
+  closePopupBtn.addEventListener("click", resetGame);
+
   newTicketBtn.addEventListener("click", function () {
     // Show loading indicator
     loadingIndicator.style.display = "flex";
@@ -13,20 +20,18 @@ document.addEventListener("DOMContentLoaded", function () {
       // Hide loading indicator after 3 seconds
       loadingIndicator.style.display = "none";
 
-      // Hide the "New Ticket" button
+      // Hide "New Ticket" button, show "Check Ticket" button
       newTicketBtn.style.display = "none";
-
-      // Show the "Check Ticket" button
       checkTicketBtn.style.display = "block";
 
-      // Change the scratch image to "scratch.png"
+      // Change scratch image
       scratchImage.src = "./assets/img/bg.png";
 
-      // change the metrics number to a random number
+      // Generate random ticket number
       const randomNum = Math.floor(Math.random() * 1000000000000000);
       metricsNum.textContent = randomNum;
 
-      // Create a scratchable canvas with "scratch.png" as the background
+      // Create scratchable canvas
       const canvas = document.createElement("canvas");
       canvas.id = "scratchCanvas";
       canvas.width = scratchImage.offsetWidth;
@@ -41,11 +46,10 @@ document.addEventListener("DOMContentLoaded", function () {
       const img = new Image();
       img.src = "./assets/img/scratch.png";
       img.onload = function () {
-        ctx.drawImage(img, 0, 0, scratchCanvas.width, scratchCanvas.height);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       };
 
       let isScratching = false;
-
       canvas.addEventListener("mousedown", () => (isScratching = true));
       canvas.addEventListener("mouseup", () => (isScratching = false));
       canvas.addEventListener("mousemove", (e) => {
@@ -59,8 +63,8 @@ document.addEventListener("DOMContentLoaded", function () {
         ctx.fill();
       });
 
-      // Add emojis behind the scratch area
-      const emojis = ["🍎", "🍌", "🍇", "🍎", "🍌", "🍇", "🍎", "🍌", "🍇"];
+      // Emoji logic
+      const emojis = ["🏆", "💰", "🤑", "🏆", "💰", "🤑", "🏆", "💰", "🤑"];
       const shuffleArray = (array) => {
         for (let i = array.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -86,7 +90,7 @@ document.addEventListener("DOMContentLoaded", function () {
       emojiContainer.style.textAlign = "center";
       emojiContainer.style.alignItems = "center";
       emojiContainer.style.justifyItems = "center";
-      emojiContainer.style.visibility = "hidden"; // Initially hidden
+      emojiContainer.style.visibility = "hidden";
       emojiGrid.flat().forEach((emoji) => {
         const emojiElement = document.createElement("div");
         emojiElement.textContent = emoji;
@@ -94,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       scratchImage.parentElement.appendChild(emojiContainer);
 
-      // Optional: Remove the canvas after a certain percentage is scratched
+      // Remove canvas after 50% is scratched
       canvas.addEventListener("mouseup", () => {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let scratchedPixels = 0;
@@ -104,44 +108,59 @@ document.addEventListener("DOMContentLoaded", function () {
         const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
         if (scratchedPercentage > 50) {
           canvas.remove();
-          emojiContainer.style.visibility = "visible"; // Reveal emojis
+          emojiContainer.style.visibility = "visible";
         }
       });
 
-      // Add event listener to "Check Ticket" button
+      // Check ticket logic
       checkTicketBtn.addEventListener("click", () => {
         if (emojiContainer.style.visibility === "visible") {
-          // Check for winning condition
           const checkWin = () => {
             for (let i = 0; i < 3; i++) {
-              // Check rows
-              if (emojiGrid[i][0] === emojiGrid[i][1] && emojiGrid[i][1] === emojiGrid[i][2]) {
-                return true;
-              }
-              // Check columns
-              if (emojiGrid[0][i] === emojiGrid[1][i] && emojiGrid[1][i] === emojiGrid[2][i]) {
-                return true;
-              }
+              if (emojiGrid[i][0] === emojiGrid[i][1] && emojiGrid[i][1] === emojiGrid[i][2]) return true;
+              if (emojiGrid[0][i] === emojiGrid[1][i] && emojiGrid[1][i] === emojiGrid[2][i]) return true;
             }
-            // Check diagonals
-            if (
+            return (
               (emojiGrid[0][0] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][2]) ||
               (emojiGrid[0][2] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][0])
-            ) {
-              return true;
-            }
-            return false;
+            );
           };
 
           if (checkWin()) {
-            alert("Congratulations! You won!");
+            popupTitle.textContent = "Congratulations!";
+            popupMessage.textContent = "You are amazing! 🎉";
           } else {
-            alert("Try again later!");
+            popupTitle.textContent = "Try Again!";
+            popupMessage.textContent = "Better luck next time! 💔";
           }
+          popupModal.classList.remove("hidden");
+          popupModal.classList.add("flex");
         } else {
-          alert("Please scratch the ticket completely before checking!");
+          popupTitle.textContent = "Incomplete!";
+          popupMessage.textContent = "Please scratch the ticket completely before checking!";
+          popupModal.classList.remove("hidden");
         }
       });
     }, 3000);
   });
+
+  function resetGame() {
+    popupModal.classList.add("hidden");
+
+    // Reset game elements
+    newTicketBtn.style.display = "block";
+    checkTicketBtn.style.display = "none";
+    metricsNum.textContent = "000000 Lucky World Cup 7 000000";
+
+    // Remove scratch canvas
+    const existingCanvas = document.getElementById("scratchCanvas");
+    if (existingCanvas) existingCanvas.remove();
+
+    // Remove emoji container
+    const existingEmojiContainer = document.getElementById("emojiContainer");
+    if (existingEmojiContainer) existingEmojiContainer.remove();
+
+    // Reset scratch image
+    scratchImage.src = "./assets/img/sample.png";
+  }
 });
