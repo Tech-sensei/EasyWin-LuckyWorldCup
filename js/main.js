@@ -50,18 +50,29 @@ document.addEventListener("DOMContentLoaded", function () {
       };
 
       let isScratching = false;
-      canvas.addEventListener("mousedown", () => (isScratching = true));
-      canvas.addEventListener("mouseup", () => (isScratching = false));
-      canvas.addEventListener("mousemove", (e) => {
+
+      const startScratch = () => (isScratching = true);
+      const stopScratch = () => (isScratching = false);
+      const scratch = (e) => {
         if (!isScratching) return;
         const rect = canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
         ctx.globalCompositeOperation = "destination-out";
         ctx.beginPath();
         ctx.arc(x, y, 20, 0, Math.PI * 2);
         ctx.fill();
-      });
+      };
+
+      // Mouse Events
+      canvas.addEventListener("mousedown", startScratch);
+      canvas.addEventListener("mouseup", stopScratch);
+      canvas.addEventListener("mousemove", scratch);
+
+      // Touch Events
+      canvas.addEventListener("touchstart", startScratch);
+      canvas.addEventListener("touchend", stopScratch);
+      canvas.addEventListener("touchmove", scratch);
 
       // Emoji logic
       const emojis = ["🏆", "💰", "🤑", "🏆", "💰", "🤑", "🏆", "💰", "🤑"];
