@@ -13,122 +13,20 @@
     <title>EasyWin|Lucky World Cup|Scratch & Win|Scratch Games</title>
   </head>
 
-  <body
-    class="bg-no-repeat bg-center bg-cover bg-fixed bg-black h-screen w-full flex flex-col items-center relative"
-    style="background-image: url(./assets/img/body_bg.png)"
-  >
-    <!--==================== HEADER ====================-->
-    <header
-      class="w-[640px] bg-[#16BB50] bg-no-repeat bg-center absolute top-0"
-      id="header"
-      style="background-image: url(./assets/img/header_bg.png); background-size: 100% 100%"
-    >
-      <!-- logo -->
-      <div class="flex items-center justify-between px-4 py-2 w-full">
-        <a href="https://easywin.ng/" class="flex items-center justify-center gap-2">
-          <img src="./assets/img/back.png" alt="logo" class="" />
-          <img src="./assets/img/EasyWin_logo_2.png" alt="logo" class="w-[100px]" />
-        </a>
-
-        <a href="https://easywin.ng/help/luckyworldcup" class="flex items-center justify-center gap-2">
-          <img src="./assets/img/icon_tips.png" alt="logo" class="" />
-        </a>
-      </div>
-    </header>
-
-    <!--==================== LOADING STATE ====================-->
-    <div id="loadingIndicator" class="hidden fixed top-0 left-0 w-full h-full items-center justify-center bg-black/50 z-50">
-      <img src="./assets/img/loading.gif" alt="" class="w-10 h-10" />
+  <body class="bg-black h-screen w-full flex flex-col items-center justify-center relative">
+    <!-- main box -->
+    <div class="w-full max-w-[500px] h-auto rounded-2xl shadow-2xl flex flex-col gap-4 items-center justify-center p-4">
+      <img src="./assets/img/luckyworldcup_rk.png" alt="luck world cup" class="w-full max-w-[300px] h-auto" />
+      <h2 class="text-white text-base text-center">Lucky World Cup</h2>
+      <a
+        href="/luckyhome.html"
+        class="bg-[#16BB50] p-4 w-full rounded-md h-10 text-center flex items-center justify-center gap-2 transition text-sm sm:text-base"
+      >
+        <span>🪙</span>
+        <span class="text-white font-bold">₦500</span>
+      </a>
     </div>
 
-    <!--==================== POP UP MODAL ====================-->
-    <div id="popupModal" class="hidden fixed top-0 left-0 w-full h-full items-center justify-center bg-black/80 z-50">
-      <div
-        class="bg-[#00000088] rounded-lg shadow-lg p-6 w-[90%] max-w-md mx-auto text-center relative flex flex-col items-center justify-center"
-      >
-        <p
-          id="popupTitle"
-          class="text-[#16BB50] text-4xl font-black"
-          style="text-shadow: 2px 2px 4px #fff201, -2px -2px 4px #fff201, 2px -2px 4px #fff201, -2px 2px 4px #fff201"
-        >
-          <!-- Title will be dynamically updated -->
-        </p>
-        <span class="text-white text-2xl font-black mt-3" id="popupMessage">
-          <!-- Message will be dynamically updated -->
-        </span>
-        <button type="button" class="mt-10 cursor-pointer" id="closePopupBtn">
-          <img src="./assets/img/fail_btn.png" alt="Close" />
-        </button>
-      </div>
-    </div>
-
-    <!--==================== MAIN ====================-->
-    <main class="main absolute mt-14 top-[0%] flex flex-col items-center justify-center">
-      <!-- main box -->
-      <div
-        class="w-[500px] h-[591px] relative rounded bg-white bg-no-repeat bg-center bg-contain shadow-2xl"
-        style="background-image: url(./assets/img/bg_img.png)"
-      >
-        <!-- available money  -->
-        <div class="absolute top-3 left-3 py-1.5 px-2.5 text-white rounded-xl bg-[#00000033] flex items-center gap-1.5 align-middle">
-          <span>🪙</span>
-          <span>₦500</span>
-        </div>
-
-        <!-- info text  -->
-        <div class="absolute top-[38%] left-[9%] w-[80%] text-center">
-          <p
-            class="text-[#f12c28] text-2xl font-black"
-            style="text-shadow: 2px 2px 4px #fff201, -2px -2px 4px #fff201, 2px -2px 4px #fff201, -2px 2px 4px #fff201"
-          >
-            WIN UP TO 1,000,000
-          </p>
-        </div>
-
-        <!-- lucky price and scratch -->
-        <div class="w-full h-full flex items-center justify-center">
-          <div class="absolute bottom-[30px] w-[32%] left-[4%]">
-            <img src="./assets/img/prize_img.png" alt="" class="w-full" />
-          </div>
-
-          <!-- Scratch Area Container -->
-          <div class="absolute bottom-[30px] w-[56%] right-[4%]">
-            <div class="relative mx-auto">
-              <div class="relative">
-                <img src="./assets/img/sample.png" alt="Scratch Surface" id="scratchImage" class="w-full" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- number metric -->
-        <div class="absolute bottom-[2px] w-full text-center">
-          <span id="metricsNum" class="bg-white h-4 leading-5 inline-block px-2.5 text-[#666] text-[10px]"
-            >000000 Lucky World Cup 7 000000</span
-          >
-        </div>
-      </div>
-
-      <!-- buttons -->
-      <button
-        type="button"
-        id="newTicketBtn"
-        class="text-white text-center text-base uppercase leading-10 font-bold cursor-pointer rounded- bg-[#ec7325] w-full mt-4 p-4 shadow-2xl hover:bg-[#ec7325] hover:shadow-lg transition-all duration-300 ease-in-out"
-      >
-        New Ticket
-      </button>
-
-      <button
-        type="button"
-        id="checkTicketBtn"
-        class="text-white text-center text-base uppercase leading-10 font-bold cursor-pointer rounded- bg-[#16BB50] w-full mt-4 p-4 shadow-2xl hover:bg-[#16BB50] hover:shadow-lg transition-all duration-300 ease-in-out"
-        style="display: none"
-      >
-        Check Ticket
-      </button>
-    </main>
-
-    <!--=============== MAIN JS ===============-->
     <script src="assets/js/main.js"></script>
   </body>
 </html>
