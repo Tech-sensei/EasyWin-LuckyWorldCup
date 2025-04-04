@@ -11,169 +11,186 @@ document.addEventListener("DOMContentLoaded", function () {
   const closePopupBtn = document.getElementById("closePopupBtn");
 
   closePopupBtn.addEventListener("click", resetGame);
+  newTicketBtn.addEventListener("click", handleNewTicket);
 
-  newTicketBtn.addEventListener("click", function () {
-    // Show loading indicator
-    loadingIndicator.style.display = "flex";
+  function handleNewTicket() {
+    showLoadingIndicator();
 
     setTimeout(() => {
-      // Hide loading indicator after 3 seconds
-      loadingIndicator.style.display = "none";
-
-      // Hide "New Ticket" button, show "Check Ticket" button
-      newTicketBtn.style.display = "none";
-      checkTicketBtn.style.display = "block";
-
-      // Change scratch image
-      scratchImage.src = "./assets/img/bg.png";
-
-      // Generate random ticket number
-      const randomNum = Math.floor(Math.random() * 1000000000000000);
-      metricsNum.textContent = randomNum;
-
-      // Create scratchable canvas
-      const canvas = document.createElement("canvas");
-      canvas.id = "scratchCanvas";
-      canvas.width = scratchImage.offsetWidth;
-      canvas.height = scratchImage.offsetHeight;
-      canvas.style.position = "absolute";
-      canvas.style.top = scratchImage.offsetTop + "px";
-      canvas.style.left = scratchImage.offsetLeft + "px";
-      canvas.style.cursor = "pointer";
-      scratchImage.parentElement.appendChild(canvas);
-
-      const ctx = canvas.getContext("2d");
-      const img = new Image();
-      img.src = "./assets/img/scratch.png";
-      img.onload = function () {
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      };
-
-      let isScratching = false;
-
-      const startScratch = () => (isScratching = true);
-      const stopScratch = () => (isScratching = false);
-      const scratch = (e) => {
-        if (!isScratching) return;
-        const rect = canvas.getBoundingClientRect();
-        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-        ctx.globalCompositeOperation = "destination-out";
-        ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
-        ctx.fill();
-      };
-
-      // Mouse Events
-      canvas.addEventListener("mousedown", startScratch);
-      canvas.addEventListener("mouseup", stopScratch);
-      canvas.addEventListener("mousemove", scratch);
-
-      // Touch Events
-      canvas.addEventListener("touchstart", startScratch);
-      canvas.addEventListener("touchend", stopScratch);
-      canvas.addEventListener("touchmove", scratch);
-
-      // Emoji logic
-      const emojis = ["🏆", "💰", "🤑", "🏆", "💰", "🤑", "🏆", "💰", "🤑"];
-      const shuffleArray = (array) => {
-        for (let i = array.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [array[i], array[j]] = [array[j], array[i]];
-        }
-      };
-      shuffleArray(emojis);
-
-      const emojiGrid = [];
-      while (emojis.length) emojiGrid.push(emojis.splice(0, 3));
-
-      const emojiContainer = document.createElement("div");
-      emojiContainer.id = "emojiContainer";
-      emojiContainer.style.position = "absolute";
-      emojiContainer.style.top = scratchImage.offsetTop + "px";
-      emojiContainer.style.left = scratchImage.offsetLeft + "px";
-      emojiContainer.style.width = scratchImage.offsetWidth + "px";
-      emojiContainer.style.height = scratchImage.offsetHeight + "px";
-      emojiContainer.style.display = "grid";
-      emojiContainer.style.gridTemplateColumns = "1fr 1fr 1fr";
-      emojiContainer.style.gridTemplateRows = "1fr 1fr 1fr";
-      emojiContainer.style.fontSize = "2rem";
-      emojiContainer.style.textAlign = "center";
-      emojiContainer.style.alignItems = "center";
-      emojiContainer.style.justifyItems = "center";
-      emojiContainer.style.visibility = "hidden";
-      emojiGrid.flat().forEach((emoji) => {
-        const emojiElement = document.createElement("div");
-        emojiElement.textContent = emoji;
-        emojiContainer.appendChild(emojiElement);
-      });
-      scratchImage.parentElement.appendChild(emojiContainer);
-
-      // Remove canvas after 30% is scratched
-      const checkScratchCompletion = () => {
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let scratchedPixels = 0;
-        for (let i = 0; i < imageData.data.length; i += 4) {
-          if (imageData.data[i + 3] === 0) scratchedPixels++;
-        }
-        const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
-        if (scratchedPercentage > 30) {
-          canvas.remove();
-          emojiContainer.style.visibility = "visible";
-        }
-      };
-
-      canvas.addEventListener("mouseup", checkScratchCompletion);
-      canvas.addEventListener("touchend", checkScratchCompletion);
-
-      // Check ticket logic
-      checkTicketBtn.addEventListener("click", () => {
-        if (emojiContainer.style.visibility === "visible") {
-          const checkWin = () => {
-            for (let i = 0; i < 3; i++) {
-              if (emojiGrid[i][0] === emojiGrid[i][1] && emojiGrid[i][1] === emojiGrid[i][2]) return true;
-              if (emojiGrid[0][i] === emojiGrid[1][i] && emojiGrid[1][i] === emojiGrid[2][i]) return true;
-            }
-            return (
-              (emojiGrid[0][0] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][2]) ||
-              (emojiGrid[0][2] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][0])
-            );
-          };
-
-          if (checkWin()) {
-            popupTitle.textContent = "Congratulations!";
-            popupMessage.textContent = "You are amazing! 🎉";
-          } else {
-            popupTitle.textContent = "Try Again!";
-            popupMessage.textContent = "Better luck next time! 💔";
-          }
-          popupModal.style.display = "flex";
-        } else {
-          popupTitle.textContent = "Incomplete!";
-          popupMessage.textContent = "Please scratch the ticket completely before checking!";
-          popupModal.style.display = "none";
-        }
-      });
+      hideLoadingIndicator();
+      prepareNewTicket();
+      createScratchCanvas();
+      createEmojiGrid();
     }, 3000);
-  });
+  }
+
+  // function to show the loading indicator
+  function showLoadingIndicator() {
+    loadingIndicator.style.display = "flex";
+  }
+
+  // function to hide the loading indicator after the ticket is generated
+  function hideLoadingIndicator() {
+    loadingIndicator.style.display = "none";
+  }
+
+  // function to prepare the new ticket
+  function prepareNewTicket() {
+    newTicketBtn.style.display = "none";
+    checkTicketBtn.style.display = "block";
+    scratchImage.src = "./assets/img/bg.png";
+    metricsNum.textContent = generateRandomTicketNumber();
+  }
+
+  // function to generate a random ticket number...the number is a random 15-digit number
+  function generateRandomTicketNumber() {
+    return Math.floor(Math.random() * 1000000000000000);
+  }
+
+  // function to create the scratch canvas 
+  function createScratchCanvas() {
+    const canvas = document.createElement("canvas");
+    canvas.id = "scratchCanvas";
+    canvas.width = scratchImage.offsetWidth;
+    canvas.height = scratchImage.offsetHeight;
+    canvas.style.position = "absolute";
+    canvas.style.top = scratchImage.offsetTop + "px";
+    canvas.style.left = scratchImage.offsetLeft + "px";
+    canvas.style.cursor = "pointer";
+    scratchImage.parentElement.appendChild(canvas);
+
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.src = "./assets/img/scratch.png";
+    img.onload = () => ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    setupScratchEvents(canvas, ctx);
+  }
+
+  // function to set up the scratch events on the canvas
+  function setupScratchEvents(canvas, ctx) {
+    let isScratching = false;
+
+    const startScratch = () => (isScratching = true);
+    const stopScratch = () => (isScratching = false);
+    const scratch = (e) => {
+      if (!isScratching) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.beginPath();
+      ctx.arc(x, y, 20, 0, Math.PI * 2);
+      ctx.fill();
+    };
+
+    canvas.addEventListener("mousedown", startScratch);
+    canvas.addEventListener("mouseup", stopScratch);
+    canvas.addEventListener("mousemove", scratch);
+    canvas.addEventListener("touchstart", startScratch);
+    canvas.addEventListener("touchend", stopScratch);
+    canvas.addEventListener("touchmove", scratch);
+
+    canvas.addEventListener("mouseup", () => checkScratchCompletion(canvas, ctx));
+    canvas.addEventListener("touchend", () => checkScratchCompletion(canvas, ctx));
+  }
+
+  function checkScratchCompletion(canvas, ctx) {
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let scratchedPixels = 0;
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      if (imageData.data[i + 3] === 0) scratchedPixels++;
+    }
+    const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
+    if (scratchedPercentage > 30) {
+      canvas.remove();
+      document.getElementById("emojiContainer").style.visibility = "visible";
+    }
+  }
+
+  function createEmojiGrid() {
+    const emojis = shuffleArray(["🏆", "💰", "🤑", "🏆", "💰", "🤑", "🏆", "💰", "🤑"]);
+    const emojiGrid = [];
+    while (emojis.length) emojiGrid.push(emojis.splice(0, 3));
+
+    const emojiContainer = document.createElement("div");
+    emojiContainer.id = "emojiContainer";
+    emojiContainer.style.position = "absolute";
+    emojiContainer.style.top = scratchImage.offsetTop + "px";
+    emojiContainer.style.left = scratchImage.offsetLeft + "px";
+    emojiContainer.style.width = scratchImage.offsetWidth + "px";
+    emojiContainer.style.height = scratchImage.offsetHeight + "px";
+    emojiContainer.style.display = "grid";
+    emojiContainer.style.gridTemplateColumns = "1fr 1fr 1fr";
+    emojiContainer.style.gridTemplateRows = "1fr 1fr 1fr";
+    emojiContainer.style.fontSize = "2rem";
+    emojiContainer.style.textAlign = "center";
+    emojiContainer.style.alignItems = "center";
+    emojiContainer.style.justifyItems = "center";
+    emojiContainer.style.visibility = "hidden";
+
+    emojiGrid.flat().forEach((emoji) => {
+      const emojiElement = document.createElement("div");
+      emojiElement.textContent = emoji;
+      emojiContainer.appendChild(emojiElement);
+    });
+
+    scratchImage.parentElement.appendChild(emojiContainer);
+    setupCheckTicketLogic(emojiGrid);
+  }
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  function setupCheckTicketLogic(emojiGrid) {
+    checkTicketBtn.addEventListener("click", () => {
+      const emojiContainer = document.getElementById("emojiContainer");
+      if (emojiContainer.style.visibility === "visible") {
+        if (checkWin(emojiGrid)) {
+          showPopup("Congratulations!", "You are amazing! 🎉");
+        } else {
+          showPopup("Try Again!", "Better luck next time! 💔");
+        }
+      } else {
+        showPopup("Incomplete!", "Please scratch the ticket completely before checking!");
+      }
+    });
+  }
+
+  function checkWin(emojiGrid) {
+    for (let i = 0; i < 3; i++) {
+      if (emojiGrid[i][0] === emojiGrid[i][1] && emojiGrid[i][1] === emojiGrid[i][2]) return true;
+      if (emojiGrid[0][i] === emojiGrid[1][i] && emojiGrid[1][i] === emojiGrid[2][i]) return true;
+    }
+    return (
+      (emojiGrid[0][0] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][2]) ||
+      (emojiGrid[0][2] === emojiGrid[1][1] && emojiGrid[1][1] === emojiGrid[2][0])
+    );
+  }
+
+  function showPopup(title, message) {
+    popupTitle.textContent = title;
+    popupMessage.textContent = message;
+    popupModal.style.display = "flex";
+  }
 
   function resetGame() {
     popupModal.style.display = "none";
-
-    // Reset game elements
     newTicketBtn.style.display = "block";
     checkTicketBtn.style.display = "none";
     metricsNum.textContent = "000000 Lucky World Cup 7 000000";
 
-    // Remove scratch canvas
     const existingCanvas = document.getElementById("scratchCanvas");
     if (existingCanvas) existingCanvas.remove();
 
-    // Remove emoji container
     const existingEmojiContainer = document.getElementById("emojiContainer");
     if (existingEmojiContainer) existingEmojiContainer.remove();
 
-    // Reset scratch image
     scratchImage.src = "./assets/img/sample.png";
   }
 });
