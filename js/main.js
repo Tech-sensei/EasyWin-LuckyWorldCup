@@ -109,19 +109,22 @@ document.addEventListener("DOMContentLoaded", function () {
       });
       scratchImage.parentElement.appendChild(emojiContainer);
 
-      // Remove canvas after 50% is scratched
-      canvas.addEventListener("mouseup", () => {
+      // Remove canvas after 30% is scratched
+      const checkScratchCompletion = () => {
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         let scratchedPixels = 0;
         for (let i = 0; i < imageData.data.length; i += 4) {
           if (imageData.data[i + 3] === 0) scratchedPixels++;
         }
         const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
-        if (scratchedPercentage > 50) {
+        if (scratchedPercentage > 30) {
           canvas.remove();
           emojiContainer.style.visibility = "visible";
         }
-      });
+      };
+
+      canvas.addEventListener("mouseup", checkScratchCompletion);
+      canvas.addEventListener("touchend", checkScratchCompletion);
 
       // Check ticket logic
       checkTicketBtn.addEventListener("click", () => {
@@ -144,19 +147,18 @@ document.addEventListener("DOMContentLoaded", function () {
             popupTitle.textContent = "Try Again!";
             popupMessage.textContent = "Better luck next time! 💔";
           }
-          popupModal.classList.remove("hidden");
-          popupModal.classList.add("flex");
+          popupModal.style.display = "flex";
         } else {
           popupTitle.textContent = "Incomplete!";
           popupMessage.textContent = "Please scratch the ticket completely before checking!";
-          popupModal.classList.remove("hidden");
+          popupModal.style.display = "none";
         }
       });
     }, 3000);
   });
 
   function resetGame() {
-    popupModal.classList.add("hidden");
+    popupModal.style.display = "none";
 
     // Reset game elements
     newTicketBtn.style.display = "block";

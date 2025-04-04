@@ -1,0 +1,309 @@
+/* style.css */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+  height: auto;
+}
+
+.body {
+  background-color: black;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Header Styles */
+.header {
+  width: 100%;
+  max-width: 640px;
+  background-color: #16bb50;
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  padding: 8px 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.back-logo {
+  width: auto;
+}
+
+.main-logo {
+  width: 100px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.help-icon {
+  width: auto;
+}
+
+/* Loading Indicator */
+.loading-indicator {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  justify-content: center;
+  align-items: center;
+}
+
+.loading-image {
+  width: 40px;
+  height: 40px;
+}
+
+/* Popup Modal */
+.popup-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 50;
+  justify-content: center;
+  align-items: center;
+}
+
+.popup-content {
+  background: rgba(0, 0, 0, 0.53);
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 448px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.popup-title {
+  color: #16bb50;
+  font-size: 36px;
+  font-weight: 900;
+  text-shadow: 2px 2px 4px #fff201, -2px -2px 4px #fff201, 2px -2px 4px #fff201, -2px 2px 4px #fff201;
+}
+
+.popup-message {
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.popup-close-btn {
+  margin-top: 40px;
+  cursor: pointer;
+}
+
+/* Main Section */
+.main {
+  width: 100%;
+  position: absolute;
+  margin-top: 56px;
+  top: 0%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+}
+
+.game-container {
+  width: 500px;
+  height: 591px;
+  position: relative;
+  border-radius: 4px;
+  background-color: white;
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  @media screen and (max-width: 640px) {
+    width: 100%;
+    height: 450px;
+  }
+}
+
+.available-money {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  padding: 6px 10px;
+  color: white;
+  background-color: #00000033;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  vertical-align: middle;
+}
+
+.info-text {
+  position: absolute;
+  top: 38%;
+  left: 9%;
+  width: 80%;
+  text-align: center;
+}
+
+.info-text-content {
+  color: #f12c28;
+  font-size: 24px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px #fff201, -2px -2px 4px #fff201, 2px -2px 4px #fff201, -2px 2px 4px #fff201;
+}
+
+.game-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.prize-image-container {
+  position: absolute;
+  bottom: 30px;
+  width: 32%;
+  left: 4%;
+}
+
+.prize-image {
+  width: 100%;
+}
+
+.scratch-area-container {
+  position: absolute;
+  bottom: 30px;
+  width: 56%;
+  right: 4%;
+}
+
+.scratch-area {
+  position: relative;
+  margin: 0 auto;
+}
+.scratch-area-box {
+  position: relative;
+  width: 100%;
+}
+
+.scratch-image {
+  width: 100%;
+}
+
+.lucky-number {
+  position: absolute;
+  bottom: 2px;
+  width: 100%;
+  text-align: center;
+}
+
+.lucky-number-text {
+  background: white;
+  height: 16px;
+  line-height: 20px;
+  display: inline-block;
+  padding: 4px 10px;
+  color: #666;
+  font-size: 10px;
+}
+
+/* Buttons */
+.new-ticket-btn,
+.check-ticket-btn {
+  color: white;
+  text-align: center;
+  font-size: 16px;
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 40px;
+  cursor: pointer;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 500px;
+  margin-top: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease-in-out;
+}
+
+.new-ticket-btn {
+  background: #ec7325;
+}
+
+.new-ticket-btn:hover {
+  background: #ec7325;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.check-ticket-btn {
+  background: #16bb50;
+}
+
+.check-ticket-btn:hover {
+  background: #16bb50;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
