@@ -19,22 +19,19 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(() => {
       hideLoadingIndicator();
       prepareNewTicket();
-      createScratchCanvas();
       createEmojiGrid();
+      createScratchCanvas();
     }, 3000);
   }
 
-  // function to show the loading indicator
   function showLoadingIndicator() {
     loadingIndicator.style.display = "flex";
   }
 
-  // function to hide the loading indicator after the ticket is generated
   function hideLoadingIndicator() {
     loadingIndicator.style.display = "none";
   }
 
-  // function to prepare the new ticket
   function prepareNewTicket() {
     newTicketBtn.style.display = "none";
     checkTicketBtn.style.display = "block";
@@ -42,12 +39,10 @@ document.addEventListener("DOMContentLoaded", function () {
     metricsNum.textContent = generateRandomTicketNumber();
   }
 
-  // function to generate a random ticket number...the number is a random 15-digit number
   function generateRandomTicketNumber() {
     return Math.floor(Math.random() * 1000000000000000);
   }
 
-  // function to create the scratch canvas 
   function createScratchCanvas() {
     const canvas = document.createElement("canvas");
     canvas.id = "scratchCanvas";
@@ -57,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
     canvas.style.top = scratchImage.offsetTop + "px";
     canvas.style.left = scratchImage.offsetLeft + "px";
     canvas.style.cursor = "pointer";
+    canvas.style.zIndex = "2";
     scratchImage.parentElement.appendChild(canvas);
 
     const ctx = canvas.getContext("2d");
@@ -67,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
     setupScratchEvents(canvas, ctx);
   }
 
-  // function to set up the scratch events on the canvas
   function setupScratchEvents(canvas, ctx) {
     let isScratching = false;
 
@@ -102,9 +97,8 @@ document.addEventListener("DOMContentLoaded", function () {
       if (imageData.data[i + 3] === 0) scratchedPixels++;
     }
     const scratchedPercentage = (scratchedPixels / (canvas.width * canvas.height)) * 100;
-    if (scratchedPercentage > 30) {
+    if (scratchedPercentage > 60) {
       canvas.remove();
-      document.getElementById("emojiContainer").style.visibility = "visible";
     }
   }
 
@@ -127,7 +121,9 @@ document.addEventListener("DOMContentLoaded", function () {
     emojiContainer.style.textAlign = "center";
     emojiContainer.style.alignItems = "center";
     emojiContainer.style.justifyItems = "center";
-    emojiContainer.style.visibility = "hidden";
+    emojiContainer.style.pointerEvents = "none"; // ❌ Disable pointer events
+    emojiContainer.style.zIndex = "1"; // ✅ Ensure it's below the canvas
+    emojiContainer.style.visibility = "visible"; // ✅ Always visible now
 
     emojiGrid.flat().forEach((emoji) => {
       const emojiElement = document.createElement("div");
@@ -150,7 +146,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function setupCheckTicketLogic(emojiGrid) {
     checkTicketBtn.addEventListener("click", () => {
       const emojiContainer = document.getElementById("emojiContainer");
-      if (emojiContainer.style.visibility === "visible") {
+      const canvas = document.getElementById("scratchCanvas");
+      if (!canvas) {
         if (checkWin(emojiGrid)) {
           showPopup("Congratulations!", "You are amazing! 🎉");
         } else {
@@ -194,3 +191,19 @@ document.addEventListener("DOMContentLoaded", function () {
     scratchImage.src = "./assets/img/sample.png";
   }
 });
+
+/**
+ * ✅ ##Differences from previous version:
+ *
+ * 1. createEmojiGrid:
+ *    - Made `emojiContainer.style.visibility = "visible"` so emojis always show.
+ *    - Set `emojiContainer.style.zIndex = "1"` to appear **under** canvas.
+ *    - Added `pointerEvents = "none"` to **allow scratching** through to canvas.
+ *
+ * 2. createScratchCanvas:
+ *    -Set `canvas.style.zIndex = "2"` to ensure it's **above** emoji grid.
+ *
+ * 3. changed the scratching percentage
+ *    -Set the percentage to 60% to remove the canvas.
+ *    -This is to ensure that the user has scratched enough of the canvas to check the ticket.
+ **/
